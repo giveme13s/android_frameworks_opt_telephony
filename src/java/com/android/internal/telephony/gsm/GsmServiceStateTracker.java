@@ -48,8 +48,9 @@ import android.telephony.CellLocation;
 import android.telephony.Rlog;
 import android.telephony.ServiceState;
 import android.telephony.SignalStrength;
-import android.telephony.gsm.GsmCellLocation;
+import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.EventLog;
 import android.util.TimeUtils;
@@ -65,7 +66,6 @@ import com.android.internal.telephony.PhoneFactory;
 import com.android.internal.telephony.RILConstants;
 import com.android.internal.telephony.RestrictedState;
 import com.android.internal.telephony.ServiceStateTracker;
-import android.telephony.SubscriptionManager;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.telephony.TelephonyProperties;
 import com.android.internal.telephony.dataconnection.DcTrackerBase;
@@ -2195,7 +2195,8 @@ final class GsmServiceStateTracker extends ServiceStateTracker {
                 if (dcTracker.isDisconnected()
                         && (dds == mPhone.getSubId()
                             || (dds != mPhone.getSubId()
-                                && ProxyController.getInstance().isDataDisconnected(dds)))) {
+                                && ProxyController.getInstance().isDataDisconnected(dds))
+                            || !SubscriptionManager.isValidSubscriptionId(dds))) {
                     // To minimize race conditions we do this after isDisconnected
                     dcTracker.cleanUpAllConnections(Phone.REASON_RADIO_TURNED_OFF);
                     if (DBG) log("Data disconnected, turn off radio right away.");
